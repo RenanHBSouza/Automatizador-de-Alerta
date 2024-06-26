@@ -1,23 +1,62 @@
-from Source.sms import mensageiro_sms
-from Source.gerenciador_email import robo_autonomo
+from Source.Notificacao_users import mensageiro
+from Source.imap_reader import verificador_email
+import time
+import os
 
 #Definição da mensagem e dos destinatários do sms
-mensagem_old = ' '
-destinatario=['+55555555555']
+account_sid = os.environ['SID_API']
+token = os.environ['TOKEN_API']
+numero='numero_twilio'
+wpp='numero_twilio_wpp'
+destinatario=['+55123456','+55654321']
 
-bot = robo_autonomo()
-send = mensageiro_sms()
+#Definição configs de busca de email
+EMAIL = os.environ['ENDERECO_EMAIL']
+SENHA = os.environ['SENHA_EMAIL']
+IMAP_server = 'servidor_imap'
+IMAP_porta = 993
+BUSCA = '(UNSEEN FROM "nome_remetente")'
+CAIXA = 'INBOX'
+ASSUNTO = 'Assunto_buscado'
+TIMER = 20
 
-#Loop para rodar enquanto o fail-safe não é acionado (mover o mouse para algum canto superior)
+mail = verificador_email(EMAIL, SENHA,IMAP_server, IMAP_porta)      #Cria os objetos a partir das classes
+send = mensageiro(account_sid, token)
+
+def gerar_mensagem(lista):
+    texto = []
+    chars = list(lista)     #Gera um vetor de caracteres da string
+    i = 0
+    while (chars[i] != '_' or chars[i+1] != '_') and i != len(chars):        #Procura uma sequencia de - para entender que o texto necessário terminou
+        texto.append(chars[i])
+        i += 1
+    result = ''.join(texto)     #Transforma a lista de caracteres nova em string
+    return result
+
 while True:
-    mensagem = bot.leitor_texto()     #Mensagem recebe o texto copiado da função leitor_texto()
+    flag = 0        #Flag que controla a necessidade de ligar para outro colaborador
+    assunto, mensagem = mail.buscar_email(CAIXA, BUSCA)     #recebe assuntos e mensagens a partir da função buscar_email
+    registros = len(assunto) 
 
-    if mensagem != mensagem_old:        #Caso a mensagem seja diferente da última copiada, envia notificação
+    for indice in range(0,registros):
+        if assunto[indice] == ASSUNTO:       #verifica se o assunto é 'serv-sensor notification':        
+            conteudo = gerar_mensagem(mensagem[indice])
+            print(conteudo)
+
+            for indice in destinatario:     #Laço para enviar a mensagem para todos os destinatários
+                retorno = send.envio_wpp(conteudo, wpp, indice)
+                print(retorno)
+
+            for indice in destinatario:     #Laço para ligar para algum dos destinatários
+                if flag == 0:
+                    retorno = send.ligacao(numero, indice)
+                    print(retorno)
+                    #Aguarda a ligação ir para um status definitivo para analisar se foi completa
+                    while send.status_ligacao(retorno) == 'queued' or send.status_ligacao(retorno) == 'ringing' or send.status_ligacao(retorno) == 'in-progress':       
+                        print(send.status_ligacao(retorno))
+                        time.sleep(3)
+                    print(send.status_ligacao(retorno))
+                    if send.status_ligacao(retorno) == 'completed':
+                        flag = 1        #Altera a flag para não ligar para nenhum outro usuário
         
-        #Laço para enviar a mensagem para todos os destinatários
-        for indice in destinatario:
-            retorno = send.envio_sms(mensagem, indice)
-            print(retorno)
-
-        print(mensagem)
-        mensagem_old = mensagem     #Altera ultimo texto copiado
+    time.sleep(TIMER)
