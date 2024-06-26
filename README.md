@@ -24,14 +24,22 @@ Ao atender, o colaborador recebe um alerta via mensagem de voz.
 ## 3. Tecnologias Utilizadas:
 
 ### Linguagem de Programação: 
-Python
+* Python
 ### Bibliotecas:
-imaplib: para conexão com servidor IMAP
-email: para processamento de emails
-twilio: para realizar chamadas telefônicas e envio de mensagens Whatsapp
+* **imaplib:** para conexão com servidor IMAP.
+
+* **email:** para processamento de emails.
+
+* **twilio:** para realizar chamadas telefônicas e envio de mensagens Whatsapp.
+
+* **os:** para utilizar variáveis do ambiente.
+
+* **time:** para executar comandos de espera.
+
 ### Serviços:
-Servidor IMAP
-Conta Twilio
+* Servidor IMAP
+
+* Conta Twilio
 
 ## 4. Passo a Passo de Utilização:
 
@@ -40,23 +48,27 @@ Clonar o repositório do GitHub contendo o código do sistema.
 Instalar as bibliotecas necessárias utilizando o arquivo **install.bat**.
 ### Configuração:
 Editar o cabeçalho do arquivo main.py com as seguintes informações:
-__Endereço de e-mail analisado__
-__Senha do e-mail analisado__
-__Servidor e porta IMAP__
-__Busca a ser feita__
-__Caixa do e-mail a ser verificada__
-__Assunto dos emails de alerta__
-__Lista de números de telefone para notificação__
-__Credenciais da conta Twilio__
+
+* _Endereço de e-mail analisado_
+
+* _Senha do e-mail analisado_
+
+* _Servidor e porta IMAP_
+
+* _Busca a ser feita_
+
+* _Caixa do e-mail a ser verificada_
+
+* _Assunto dos emails de alerta_
+
+* _Lista de números de telefone para notificação_
+
+* _Credenciais da conta Twilio_
 ### Execução:
 Executar o script principal (main.py) utilizando o arquivo start.bat.
 
 ## 5. Observações:
 
-O sistema está configurado para verificar emails a cada 20 segundos. Essa periodicidade pode ser ajustada de acordo com a necessidade.
+* O sistema está configurado para verificar emails a cada 20 segundos. Essa periodicidade pode ser ajustada de acordo com a necessidade.
 
-Utilize de variáveis de ambiente para aumentar a segurança de suas informações, principalmente de e-mail e conta Twilio (TOKEN e SID).
-
-## 6. Considerações Finais:
-
-Este sistema de monitoramento e notificação automatiza o processo de comunicação de alertas gerados por sensores no CPD da empresa, garantindo uma resposta rápida e eficiente a eventuais problemas na infraestrutura crítica. A utilização de tecnologias como Python, bibliotecas especializadas e serviços em nuvem permite a implementação de um sistema robusto, escalável e de fácil manutenção.
+* Utilize de variáveis de ambiente para aumentar a segurança de suas informações, principalmente de e-mail e conta Twilio (TOKEN e SID).
